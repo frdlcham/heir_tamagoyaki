@@ -162,6 +162,7 @@ cc_binary(
         "@heir//lib/Transforms/LinalgFuseLinearOps",
         "@heir//lib/Transforms/LowerPolynomialEval",
         "@heir//lib/Transforms/LowerUnpack",
+        "@heir//lib/Transforms/MatmulKernelEGraph",
         "@heir//lib/Transforms/MemrefToArith:ExpandCopy",
         "@heir//lib/Transforms/MemrefToArith:MemrefToArithRegistration",
         "@heir//lib/Transforms/OperationBalancer",
@@ -229,6 +230,7 @@ cc_binary(
         "@llvm-project//mlir:Transforms",
         "@llvm-project//mlir:UBToLLVM",
         "@llvm-project//mlir:VectorToLLVM",
+        "@tamagoyaki//:MLIREquivalence",
     ],
 )
 

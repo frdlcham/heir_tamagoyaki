@@ -12,3 +12,20 @@ index c2c50a0..a2e6b04 100644
        return false;
      return OperationEquivalence::isEquivalentTo(
          const_cast<Operation *>(lhsC), const_cast<Operation *>(rhsC),
+diff --git a/src/EquivalenceDialect.cpp b/src/EquivalenceDialect.cpp
+--- a/src/EquivalenceDialect.cpp
++++ b/src/EquivalenceDialect.cpp
+@@ -432,10 +432,13 @@
+     return -1;
+ 
+   SmallVector<int64_t> childCosts;
++  GraphOp graphOp = op->getParentOfType<GraphOp>();
+   for (Value dep : op->getOperands()) {
+     Operation *defOp = dep.getDefiningOp();
+     if (!defOp)
+       continue; // block argument — free
++    if (graphOp && !graphOp->isAncestor(defOp))
++      continue; // captured from outside the graph — free
+     auto it = opCosts.find(defOp);
+     if (it == opCosts.end() || it->second == -1)
+       return -1;

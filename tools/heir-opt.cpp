@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "EquivalenceDialect.h"  // from @tamagoyaki
 #include "lib/Dialect/Arith/Conversions/ArithToCGGI/ArithToCGGI.h"
 #include "lib/Dialect/Arith/Conversions/ArithToCGGIQuart/ArithToCGGIQuart.h"
 #include "lib/Dialect/Arith/Conversions/ArithToModArith/ArithToModArith.h"
@@ -108,6 +109,7 @@
 #include "lib/Transforms/LinalgFuseLinearOps/LinalgFuseLinearOps.h"
 #include "lib/Transforms/LowerPolynomialEval/LowerPolynomialEval.h"
 #include "lib/Transforms/LowerUnpack/LowerUnpack.h"
+#include "lib/Transforms/MatmulKernelEGraph/MatmulKernelEGraph.h"
 #include "lib/Transforms/OperationBalancer/OperationBalancer.h"
 #include "lib/Transforms/OptimizeRelinearization/OptimizeRelinearization.h"
 #include "lib/Transforms/PolynomialApproximation/PolynomialApproximation.h"
@@ -229,6 +231,9 @@ int main(int argc, char** argv) {
   registry.insert<polynomial::PolynomialDialect>();
   registry.insert<scf::SCFDialect>();
   registry.insert<tensor::TensorDialect>();
+
+  // Tamagoyaki e-graph dialect
+  registry.insert<equivalence::EquivalenceDialect>();
 
   // Uncomment if you want everything bound to CLI flags.
   // registerAllDialects(registry);
@@ -359,6 +364,8 @@ int main(int argc, char** argv) {
   registerLayoutOptimizationPasses();
   registerLinalgCanonicalizationsPasses();
   registerLinalgFuseLinearOpsPasses();
+  registerMatmulKernelEGraphPasses();
+  equivalence::registerEquivalencePasses();
   registerReductionCanonicalizationsPasses();
   registerFoldConstantTensorsPasses();
   registerLowerPolynomialEvalPasses();
