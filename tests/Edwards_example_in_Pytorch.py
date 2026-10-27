@@ -1,6 +1,7 @@
 import torch
 from torch import nn
-
+import torch_mlir
+from torch_mlir.fx import OutputType
 
 # SHAPES
 T = 5
@@ -40,7 +41,17 @@ conv3 = nn.Conv3d(in_channels=C_in_3, out_channels=C_out_3,
                   groups=1,
                   padding='same', bias=True)
 
-input = torch.randn((C_in_1, T, H, W))
-output = conv3(conv2(conv1(input)))
-print(output)
+input = torch.randn((1, C_in_1, T, H, W))
 
+
+# output = conv3(conv2(conv1(input)))
+# print(output)
+
+model = nn.Sequential(conv1, conv2, conv3).eval() # issue: conv2 fails when trying to convert to mlir (because depthwise conv?)
+
+mlir = torch_mlir.fx.export_and_import(
+    model,
+    input,
+    output_type=OutputType.LINALG_ON_TENSORS)
+
+print(mlir)
